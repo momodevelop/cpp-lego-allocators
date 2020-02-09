@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lego">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="lego\internal">
+      <UniqueIdentifier>{de03f0f4-36d4-476e-a3d4-6789ddffe86b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\lego\fallback_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\heap_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\linear_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\log_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\null_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\stack_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\internal\block.h">
+      <Filter>lego\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\internal\pointer.h">
+      <Filter>lego\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\local_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\internal\types.h">
+      <Filter>lego\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\stl_adapter.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
