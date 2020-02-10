@@ -7,6 +7,8 @@
 #include "../lego/fallback_allocator.h"
 #include "../lego/log_allocator.h"
 #include "../lego/stack_allocator.h"
+#include "../lego/linear_allocator.h"
+
 using namespace std;
 using namespace lego;
 
@@ -89,7 +91,7 @@ void TestFallbackLocalHeap() {
 }
 
 void TestStackAllocator() {
-	cout << "=== Testing Fallback/Local/Heap/Stack allocators" << endl;
+	cout << "=== Testing Stack allocator" << endl;
 	// Stack allocator of 100 bytes should only be able to take 100 / (4 + 1) = 20 4-byte allocations
 	// +1 is due to the bookkeeping required per allocator
 	using Allocator = HeapStackAllocator<100>;
@@ -99,11 +101,16 @@ void TestStackAllocator() {
 	allocator.deallocate(startBlk);
 
 	vector<Blk> blkList;
+	bool allocatesSuccess = true;
 	for (int i = 0; i < 20; ++i) {
-		blkList.push_back(allocator.allocate(4, 4));
+		auto blk = allocator.allocate(4, 4);
+		blkList.push_back(blk);
+		if (!blk)
+			allocatesSuccess = false;
+		
 	}
 	auto expectNullBlk = allocator.allocate(4, 4);
-	cout << "Testing allocation integrity..." << (!expectNullBlk ? "YES" : "NO") << endl;
+	cout << "Testing allocation integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
 
 	// deallocate test
 	for (int i = 19; i >= 0; --i) {
@@ -126,10 +133,35 @@ void TestStackAllocator() {
 	cout << endl;
 }
 
+void TestLinearAllocator() {
+	cout << "=== Testing Linear allocator" << endl;
+	using Allocator = HeapLinearAllocator<100>;
+	Allocator allocator;
+
+	bool allocatesSuccess = true;
+	for (int i = 0; i < 25; ++i) {
+		auto blk = allocator.allocate(4, 4);
+		if (!blk)
+			allocatesSuccess = false;
+	}
+	auto expectNullBlk = allocator.allocate(4, 4);
+	cout << "Testing allocate integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
+	allocator.deallocateAll();
+
+	allocatesSuccess = true;
+	for (int i = 0; i < 25; ++i) {
+		auto blk = allocator.allocate(4, 4);
+		if (!blk)
+			allocatesSuccess = false;
+	}
+	expectNullBlk = allocator.allocate(4, 4);
+	cout << "Testing deallocateAll integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
+}
+
 int main() {
 	TestSTLOnVector();
 	TestSTLOnList();
 	TestFallbackLocalHeap();
-
 	TestStackAllocator();
+	TestLinearAllocator();
 }
