@@ -110,14 +110,14 @@ void TestStackAllocator() {
 		
 	}
 	auto expectNullBlk = allocator.allocate(4, 4);
-	cout << "Testing allocation integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
+	cout << "Testing allocate integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
 
 	// deallocate test
 	for (int i = 19; i >= 0; --i) {
 		allocator.deallocate(blkList[i]);
 	}
 	auto tmpBlk = allocator.allocate(4, 4);
-	cout << "Testing deallocation integrity..." << (tmpBlk == startBlk ? "YES" : "NO") << endl;
+	cout << "Testing deallocate integrity..." << (tmpBlk == startBlk ? "YES" : "NO") << endl;
 	allocator.deallocate(tmpBlk);
 
 	//deallocate all test
