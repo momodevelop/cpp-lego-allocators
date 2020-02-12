@@ -8,6 +8,7 @@
 #include "../lego/log_allocator.h"
 #include "../lego/stack_allocator.h"
 #include "../lego/linear_allocator.h"
+#include "../lego/segregator_allocator.h"
 
 using namespace std;
 using namespace lego;
@@ -156,6 +157,25 @@ void TestLinearAllocator() {
 	}
 	expectNullBlk = allocator.allocate(4, 4);
 	cout << "Testing deallocateAll integrity..." << (!expectNullBlk && allocatesSuccess ? "YES" : "NO") << endl;
+	cout << endl;
+}
+void TestSegregatorAllocator() {
+	cout << "=== Testing SegregatorAllocator" << endl;
+	using Allocator = SegregatorAllocator<4,
+			LocalLinearAllocator<100>,
+			LocalLinearAllocator<100>
+	>;
+
+	Allocator allocator;
+
+	// the memory given back on the first allocation of the 
+	// 'small' LocalLinearAllocator should be at least 100 bytes after the
+	// first allocation of the 'big' LocalLinearAllocator.
+
+	auto small = allocator.allocate(4, 4);
+	auto large = allocator.allocate(8, 4);
+	cout << "Testing allocate integrity..." << (((char*)large.ptr - (char*)small.ptr ) >= 100 ? "YES" : "NO") << endl;
+
 }
 
 int main() {
@@ -164,4 +184,5 @@ int main() {
 	TestFallbackLocalHeap();
 	TestStackAllocator();
 	TestLinearAllocator();
+	TestSegregatorAllocator();
 }
