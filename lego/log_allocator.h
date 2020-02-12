@@ -19,28 +19,30 @@ namespace lego {
 
 
 	template<class Allocator, class LogStrategy = BasicLogStrategy>
-	class LogAllocator : private Allocator, private LogStrategy
+	class LogAllocator
 	{
+		Allocator allocator;
+		LogStrategy logStrategy;
 	public:
 		Blk allocate(size_t n, uint8_t alignment)
 		{
-			Blk ret = Allocator::allocate(n, alignment);
-			LogStrategy::printAllocate(ret);
+			Blk ret = allocator.allocate(n, alignment);
+			logStrategy.printAllocate(ret);
 			return ret;
 		}
 
 		void deallocate(Blk blk)
 		{
-			LogStrategy::printDeallocate(blk);
-			Allocator::deallocate(blk);
+			logStrategy.printDeallocate(blk);
+			allocator.deallocate(blk);
 		}
 
 		bool owns(Blk blk) const noexcept {
-			return Allocator::owns(blk);
+			return allocator.owns(blk);
 		}
 
 		void deallocateAll() noexcept {
-			Allocator::deallocateAll();
+			allocator.deallocateAll();
 		}
 	
 	};

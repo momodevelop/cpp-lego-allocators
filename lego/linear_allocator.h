@@ -11,14 +11,28 @@
 #include "local_allocator.h"
 #include "heap_allocator.h"
 
-//TODO
 namespace lego {
 	template<size_t Capacity, class Allocator>
 	class LinearAllocator
 	{
+		static_assert(Capacity != 0);
+
+		Allocator allocator;
+		Blk memoryBlk = {};
 		char* start = nullptr;
 		char* current = nullptr;
 	public:
+		LinearAllocator() {
+			memoryBlk = allocator.allocate(Capacity, alignof(max_align_t));
+			assert(memoryBlk);
+			start = current = reinterpret_cast<char*>(memoryBlk.ptr);
+
+		}
+
+		~LinearAllocator() {
+			allocator.deallocate(memoryBlk);
+		}
+
 		Blk allocate(size_t size, uint8_t alignment)
 		{
 			assert(size != 0);

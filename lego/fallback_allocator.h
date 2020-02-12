@@ -8,14 +8,16 @@
 
 namespace lego {
 	template <class Primary, class Fallback>
-	class FallbackAllocator : private Primary, private Fallback
+	class FallbackAllocator
 	{
+		Primary primary;
+		Fallback fallback;
 	public:
 		Blk allocate(size_t n, uint8_t alignment)
 		{
-			Blk blk = Primary::allocate(n, alignment);
+			Blk blk = primary.allocate(n, alignment);
 			if (!blk) {
-				return Fallback::allocate(n, alignment);
+				return fallback.allocate(n, alignment);
 			}
 	
 			return blk;
@@ -23,14 +25,14 @@ namespace lego {
 
 		void deallocate(Blk blk) noexcept  // Use pointer if pointer is not a value_type*
 		{
-			if (Primary::owns(blk))
-				Primary::deallocate(blk);
+			if (primary.owns(blk))
+				primary.deallocate(blk);
 			else
-				Fallback::deallocate(blk);
+				fallback.deallocate(blk);
 		}
 
 		bool owns(const Blk& blk) const {
-			return Primary::owns(blk) || Fallback::owns(blk);
+			return primary.owns(blk) || fallback.owns(blk);
 		}
 
 

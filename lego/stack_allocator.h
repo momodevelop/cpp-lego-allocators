@@ -23,29 +23,29 @@ namespace lego {
 	//
 
 	template <size_t Capacity, class Allocator>
-	class StackAllocator : private Allocator{
+	class StackAllocator {
 		static_assert(Capacity != 0);
 		// The adjustment value should not be bigger than uint8_t 
 		struct Header {
 			uint8_t adjustment;
 		};
-
-		Blk blk = {};
+		Allocator allocator;
+		Blk memoryBlock = {};
 		char* start = nullptr;
 		char* current = nullptr;
 		char* metadataCurrent = nullptr; // Pointer to the start of metadata of headers
 	public:
 		StackAllocator()
 		{
-			blk = Allocator::allocate(Capacity, alignof(max_align_t));
-			start = static_cast<char*>(blk.ptr);
-			assert(start != nullptr);
+			memoryBlock = allocator.allocate(Capacity, alignof(max_align_t));
+			assert(memoryBlock);
+			start = reinterpret_cast<char*>(memoryBlock.ptr);
 			deallocateAll();
 		}
 
 		~StackAllocator()
 		{
-			Allocator::deallocate(blk);
+			allocator.deallocate(memoryBlock);
 		}
 
 		Blk allocate(size_t size, uint8_t alignment) noexcept
