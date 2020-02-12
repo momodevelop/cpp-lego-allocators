@@ -39,7 +39,7 @@ namespace lego {
 			return Allocator::owns(blk);
 		}
 
-		void deallocateAll()  noexcept {
+		void deallocateAll() noexcept {
 			Allocator::deallocateAll();
 		}
 	

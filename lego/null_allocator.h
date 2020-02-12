@@ -19,7 +19,7 @@ namespace lego {
 			return false;
 		}
 
-		void deallocateAll()  noexcept {}
+		void deallocateAll() noexcept {}
 	};
 
 }

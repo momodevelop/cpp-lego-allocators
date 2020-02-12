@@ -89,7 +89,7 @@ namespace lego {
 			this->metadataCurrent += sizeof(Header);
 		}
 
-		void deallocateAll()  noexcept {
+		void deallocateAll() noexcept {
 			current = start;
 
 			// Make sure the metadata starts at an piece of memory that it aligns to.

@@ -13,10 +13,7 @@ namespace lego {
 	public:
 		Blk allocate(size_t n, uint8_t alignment)
 		{
-			return { 
-				::operator new(n), 
-				n 
-			};
+			return { ::operator new(n),	n };
 		}
 
 		void deallocate(Blk blk)  

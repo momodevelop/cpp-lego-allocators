@@ -38,7 +38,10 @@ namespace lego {
 			return blk.ptr == arr;
 		}
 
-
+		void deallocateAll()
+		{
+			deallocate();
+		}
 	};
 
 }
