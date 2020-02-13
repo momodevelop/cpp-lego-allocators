@@ -53,7 +53,7 @@ namespace lego {
 			assert(size != 0);
 			assert(alignment != 0);
 
-			uint8_t adjustment = getAlignForwardDiff(current, alignment);
+			uint8_t adjustment = pointer::getAlignForwardDiff(current, alignment);
 
 			// Make sure that there is space to alloc 
 			if (current + adjustment + size > metadataCurrent - sizeof(Header)) {
@@ -94,7 +94,7 @@ namespace lego {
 
 			// Make sure the metadata starts at an piece of memory that it aligns to.
 			// From here on, our Headers will be contiguously lined up :)
-			this->metadataCurrent = getAlignBackward(start + Capacity, alignof(Header));
+			this->metadataCurrent = pointer::getAlignBackward(start + Capacity, alignof(Header));
 		}
 
 

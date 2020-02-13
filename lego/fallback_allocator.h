@@ -10,8 +10,8 @@ namespace lego {
 	template <class Primary, class Fallback>
 	class FallbackAllocator
 	{
-		Primary primary;
-		Fallback fallback;
+		Primary primary = {};
+		Fallback fallback = {};
 	public:
 		Blk allocate(size_t n, uint8_t alignment)
 		{

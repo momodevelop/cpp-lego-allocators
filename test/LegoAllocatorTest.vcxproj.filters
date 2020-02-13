@@ -19,7 +19,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lego\stack_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\stl_adapter.h">
+      <Filter>lego</Filter>
+    </ClInclude>
     <ClInclude Include="..\lego\fallback_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\freelist_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
     <ClInclude Include="..\lego\heap_allocator.h">
@@ -28,29 +37,26 @@
     <ClInclude Include="..\lego\linear_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
+    <ClInclude Include="..\lego\local_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
     <ClInclude Include="..\lego\log_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
     <ClInclude Include="..\lego\null_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
-    <ClInclude Include="..\lego\stack_allocator.h">
+    <ClInclude Include="..\lego\segregator_allocator.h">
       <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\internal\types.h">
+      <Filter>lego\internal</Filter>
     </ClInclude>
     <ClInclude Include="..\lego\internal\block.h">
       <Filter>lego\internal</Filter>
     </ClInclude>
     <ClInclude Include="..\lego\internal\pointer.h">
       <Filter>lego\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lego\local_allocator.h">
-      <Filter>lego</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lego\internal\types.h">
-      <Filter>lego\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lego\stl_adapter.h">
-      <Filter>lego</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -38,7 +38,7 @@ namespace lego {
 			assert(size != 0);
 			assert(alignment != 0);
 
-			uint8_t adjustment = getAlignForwardDiff(current, alignment);
+			uint8_t adjustment = pointer::getAlignForwardDiff(current, alignment);
 
 			// if not enough space, return nullptr
 			if (current + adjustment + size > start + Capacity) {

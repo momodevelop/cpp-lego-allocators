@@ -9,6 +9,7 @@
 #include "../lego/stack_allocator.h"
 #include "../lego/linear_allocator.h"
 #include "../lego/segregator_allocator.h"
+#include "../lego/freelist_allocator.h"
 
 using namespace std;
 using namespace lego;
@@ -178,6 +179,17 @@ void TestSegregatorAllocator() {
 
 }
 
+void TestFreeListAllocator() {
+	cout << "=== Testing FreeListAllocator" << endl;
+	using Allocator = LocalFreeListAllocator<100>;
+
+	Allocator allocator;
+	allocator.allocate(4, 4);
+
+
+
+}
+
 int main() {
 	TestSTLOnVector();
 	TestSTLOnList();
@@ -185,4 +197,5 @@ int main() {
 	TestStackAllocator();
 	TestLinearAllocator();
 	TestSegregatorAllocator();
+	TestFreeListAllocator();
 }

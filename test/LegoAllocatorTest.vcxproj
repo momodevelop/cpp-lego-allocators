@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\lego\fallback_allocator.h" />
+    <ClInclude Include="..\lego\freelist_allocator.h" />
+    <ClInclude Include="..\lego\heap_allocator.h" />
+    <ClInclude Include="..\lego\internal\block.h" />
+    <ClInclude Include="..\lego\internal\pointer.h" />
+    <ClInclude Include="..\lego\internal\types.h" />
+    <ClInclude Include="..\lego\linear_allocator.h" />
+    <ClInclude Include="..\lego\local_allocator.h" />
+    <ClInclude Include="..\lego\log_allocator.h" />
+    <ClInclude Include="..\lego\null_allocator.h" />
+    <ClInclude Include="..\lego\segregator_allocator.h" />
+    <ClInclude Include="..\lego\stack_allocator.h" />
+    <ClInclude Include="..\lego\stl_adapter.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{5BABE4B0-71A4-489A-BF00-5046C73B9714}</ProjectGuid>
@@ -123,22 +141,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\lego\fallback_allocator.h" />
-    <ClInclude Include="..\lego\heap_allocator.h" />
-    <ClInclude Include="..\lego\internal\block.h" />
-    <ClInclude Include="..\lego\internal\pointer.h" />
-    <ClInclude Include="..\lego\internal\types.h" />
-    <ClInclude Include="..\lego\linear_allocator.h" />
-    <ClInclude Include="..\lego\local_allocator.h" />
-    <ClInclude Include="..\lego\log_allocator.h" />
-    <ClInclude Include="..\lego\null_allocator.h" />
-    <ClInclude Include="..\lego\stack_allocator.h" />
-    <ClInclude Include="..\lego\stl_adapter.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

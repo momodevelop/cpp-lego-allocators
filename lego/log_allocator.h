@@ -7,18 +7,20 @@
 #include <iostream>
 
 namespace lego {
-	class BasicLogStrategy {
-	public:
-		void printAllocate(Blk blk) {
-			std::cout << "Allocating: " << blk.size << " @ " << blk.ptr << std::endl;
-		}
-		void printDeallocate(Blk blk) {
-			std::cout << "Deallocating: " << blk.size << " @ " << blk.ptr << std::endl;
-		}
-	};
+	namespace detail {
+		class BasicLogStrategy {
+		public:
+			void printAllocate(Blk blk) {
+				std::cout << "Allocating: " << blk.size << " @ " << blk.ptr << std::endl;
+			}
+			void printDeallocate(Blk blk) {
+				std::cout << "Deallocating: " << blk.size << " @ " << blk.ptr << std::endl;
+			}
+		};
+	}
 
 
-	template<class Allocator, class LogStrategy = BasicLogStrategy>
+	template<class Allocator, class LogStrategy = detail::BasicLogStrategy>
 	class LogAllocator
 	{
 		Allocator allocator;
