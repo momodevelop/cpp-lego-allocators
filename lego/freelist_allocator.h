@@ -68,6 +68,8 @@ namespace lego {
 			size_t roundObjectSize = pointer::roundToAlignment(size, alignof(max_align_t));
 			size_t totalSize = sizeof(Header) + roundObjectSize;
 
+			// First Fit Strategy
+			// TODO: expose as policy?
 			// Search for a free block that fits the size.
 			FreeBlock* itr = freeList;
 			FreeBlock* prev = nullptr;
