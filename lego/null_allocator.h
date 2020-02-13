@@ -8,12 +8,11 @@ namespace lego {
 	class NullAllocator
 	{
 	public:
-		Blk allocate(size_t n, uint8_t alignment) {
+		Blk allocate(size_t size, uint8_t alignment) {
 			return {};
 		}
 
-		void deallocate(Blk blk) {
-		}
+		void deallocate(Blk blk) {}
 
 		bool owns(Blk blk) const noexcept {
 			return false;

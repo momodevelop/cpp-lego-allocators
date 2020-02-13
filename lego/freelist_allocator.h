@@ -34,7 +34,6 @@ namespace lego {
 		Blk memory = {};
 		char* start = nullptr;
 		FreeBlock* freeList = nullptr;
-		size_t capacity;
 		Allocator allocator;
 
 		constexpr size_t MinBlockSize() {
@@ -62,8 +61,7 @@ namespace lego {
 
 
 		Blk allocate(size_t size, uint8_t alignment) {
-			if (size == 0 || alignment == 0)
-				throw std::bad_alloc();
+			assert(size && alignment);
 
 			// Calculate the size of the header + object rounded to alignment.
 			// All our objects and headers will be aligned to the maximum alignment size. 
@@ -90,7 +88,7 @@ namespace lego {
 
 			// Could not find a block that fits
 			if (itr == nullptr)
-				return nullptr;
+				return {};
 
 			// Here, we have found a block that fits and update our freeList.
 			// Check if the block can be split after allocation.
@@ -137,27 +135,29 @@ namespace lego {
 
 			// Get the object to return to the user
 			void* ret = pointer::add(itr, sizeof(Header));
-			return ret;
+			return { ret, size };
 		}
 
 		bool owns(Blk blk) const noexcept {
-			return reinterpret_cast<char*>(blk.ptr) >= start && reinterpret_cast<char*>(blk.ptr) < start + capacity;
+			return reinterpret_cast<char*>(blk.ptr) >= start && reinterpret_cast<char*>(blk.ptr) < start + Capacity;
 		}
 
 		// Reset all variables to start
 		void deallocateAll() noexcept {
 			this->freeList = reinterpret_cast<FreeBlock*>(start);
-			this->freeList->block.size = capacity;
+			this->freeList->block.size = Capacity;
 			this->freeList->block.next = nullptr;
 		}
 
 		void deallocate(Blk blk)
 		{
-			assert(blk);
+			if (!blk)
+				return;
+
 			assert(owns(blk));
 
-			Header* header = reinterpret_cast<Header*>(sub(blk.ptr, sizeof(Header)));
-			uintptr_t blockEnd = reinterpret_cast<uintptr_t>(add(header, header->size));
+			Header* header = reinterpret_cast<Header*>(pointer::sub(blk.ptr, sizeof(Header)));
+			uintptr_t blockEnd = reinterpret_cast<uintptr_t>(pointer::add(header, header->size));
 
 			// Look for a FreeBlock which we can combine
 			FreeBlock* itr = freeList;

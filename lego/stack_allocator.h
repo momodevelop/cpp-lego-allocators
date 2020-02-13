@@ -80,6 +80,9 @@ namespace lego {
 
 		void deallocate(Blk blk)  noexcept
 		{
+			if (!blk)
+				return;
+
 			assert(owns(blk));
 
 			// When you free, get the adjustment from the current Header to know how much to fall back 

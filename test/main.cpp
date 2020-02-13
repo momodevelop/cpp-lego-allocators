@@ -176,18 +176,35 @@ void TestSegregatorAllocator() {
 	auto small = allocator.allocate(4, 4);
 	auto large = allocator.allocate(8, 4);
 	cout << "Testing allocate integrity..." << (((char*)large.ptr - (char*)small.ptr ) >= 100 ? "YES" : "NO") << endl;
+	cout << endl;
 
 }
 
-// TODO
 void TestFreeListAllocator() {
 	cout << "=== Testing FreeListAllocator" << endl;
-	using Allocator = LocalFreeListAllocator<100>;
+	using Allocator = LocalFreeListAllocator<1000>;
 
+	// We'll do a simple test. Allocate and deallocate semi-randomly.
+	// Once everything is deallocated, next allocation should be same as first allocation.
 	Allocator allocator;
-	allocator.allocate(4, 4);
+	auto blk = allocator.allocate(4, 4);
+	const char* const firstAllocationPtr = reinterpret_cast<char*>(blk.ptr);
+	allocator.deallocate(blk);
 
+	Blk blks[20];
+	for (int i = 0; i < 20; ++i) {
+		blks[i] = allocator.allocate(i + 1, (uint8_t)(pow(2.0, (double)(i % 4))));
+		if (i % 4 == 0) {
+			allocator.deallocate(blks[i / 2]);
+			blks[i / 2] = {};
+		}
+	}
 
+	for (int i = 0; i < 20; ++i) {
+		allocator.deallocate(blks[i]);
+	}
+	blk = allocator.allocate(4, 4);
+	cout << "Testing allocate integrity..." << ((char*)blk.ptr == firstAllocationPtr ? "YES" : "NO") << endl;
 
 }
 

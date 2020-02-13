@@ -15,14 +15,14 @@ namespace lego {
 		template <class U> STLAdapter(STLAdapter<U, Allocator> const&) noexcept {}
 
 	public:
-		value_type* allocate(size_t n)
+		value_type* allocate(size_t size)
 		{
-			return static_cast<value_type*>(Allocator::allocate(n * sizeof(value_type), alignof(value_type)).ptr);
+			return static_cast<value_type*>(Allocator::allocate(size * sizeof(value_type), alignof(value_type)).ptr);
 		}
 
-		void deallocate(value_type* p, size_t n) noexcept 
+		void deallocate(value_type* p, size_t size) noexcept 
 		{
-			Allocator::deallocate({ p, n });
+			Allocator::deallocate({ p, size });
 		}
 
 	};

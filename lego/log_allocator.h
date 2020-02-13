@@ -26,15 +26,22 @@ namespace lego {
 		Allocator allocator;
 		LogStrategy logStrategy;
 	public:
-		Blk allocate(size_t n, uint8_t alignment)
+		Blk allocate(size_t size, uint8_t alignment)
 		{
-			Blk ret = allocator.allocate(n, alignment);
+			assert(size && alignment);
+
+			Blk ret = allocator.allocate(size, alignment);
 			logStrategy.printAllocate(ret);
 			return ret;
 		}
 
 		void deallocate(Blk blk)
 		{
+			if (!blk)
+				return;
+
+			assert(owns(blk));
+
 			logStrategy.printDeallocate(blk);
 			allocator.deallocate(blk);
 		}

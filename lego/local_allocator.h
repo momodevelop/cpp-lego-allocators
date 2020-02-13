@@ -18,20 +18,22 @@ namespace lego {
 		char arr[Capacity] = {0};
 		bool allocated = false;
 	public:
-		Blk allocate(size_t n, uint8_t alignment)
+		Blk allocate(size_t size, uint8_t alignment)
 		{
-			if (allocated || n > Capacity)
+			assert(size && alignment);
+
+			if (allocated || size > Capacity)
 				return {};
 			else {
 				allocated = true;
-				return { arr, n };
+				return { arr, size };
 			}
 		}
 
 		void deallocate(Blk blk)  
 		{
-			if (owns(blk) && allocated)
-				allocated = false;
+			assert(blk && owns(blk) && allocated);
+			allocated = false;
 		}
 
 		bool owns(Blk blk) const noexcept {

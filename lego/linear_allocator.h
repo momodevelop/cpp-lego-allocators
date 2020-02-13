@@ -35,8 +35,7 @@ namespace lego {
 
 		Blk allocate(size_t size, uint8_t alignment)
 		{
-			assert(size != 0);
-			assert(alignment != 0);
+			assert(size && alignment);
 
 			uint8_t adjustment = pointer::getAlignForwardDiff(current, alignment);
 

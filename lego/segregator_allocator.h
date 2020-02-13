@@ -12,18 +12,23 @@ namespace lego {
 		SmallAllocator smallAllocator;
 		BigAllocator bigAllocator;
 	public:
-		Blk allocate(size_t n, uint8_t alignment)
+		Blk allocate(size_t size, uint8_t alignment)
 		{
-			if (n > Threshhold) {
-				return bigAllocator.allocate(n, alignment);
+			assert(size && alignment);
+
+			if (size > Threshhold) {
+				return bigAllocator.allocate(size, alignment);
 			}
 			else {
-				return smallAllocator.allocate(n, alignment);
+				return smallAllocator.allocate(size, alignment);
 			}
 		}
 
 		void deallocate(Blk blk) noexcept  // Use pointer if pointer is not a value_type*
 		{
+			if (!blk)
+				return;
+
 			if (smallAllocator.owns(blk))
 				smallAllocator.deallocate(blk);
 			else if (bigAllocator.owns(blk))

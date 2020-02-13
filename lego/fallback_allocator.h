@@ -2,7 +2,7 @@
 #define __LEGO_FALLBACK_ALLOCATOR_H__
 
 // If the Primary allocator fails, the Fallback allocator will allocate.
-
+#include <cassert>
 #include "internal/block.h"
 #include "internal/types.h"
 
@@ -13,11 +13,13 @@ namespace lego {
 		Primary primary = {};
 		Fallback fallback = {};
 	public:
-		Blk allocate(size_t n, uint8_t alignment)
+		Blk allocate(size_t size, uint8_t alignment)
 		{
-			Blk blk = primary.allocate(n, alignment);
+			assert(size && alignment);
+
+			Blk blk = primary.allocate(size, alignment);
 			if (!blk) {
-				return fallback.allocate(n, alignment);
+				return fallback.allocate(size, alignment);
 			}
 	
 			return blk;
@@ -25,10 +27,15 @@ namespace lego {
 
 		void deallocate(Blk blk) noexcept  // Use pointer if pointer is not a value_type*
 		{
+			if (!blk)
+				return;
+
 			if (primary.owns(blk))
 				primary.deallocate(blk);
-			else
+			else if (fallback.owns(blk))
 				fallback.deallocate(blk);
+			else
+				assert(false);
 		}
 
 		bool owns(const Blk& blk) const {

@@ -3,7 +3,7 @@
 
 // Simple allocator that reserves memory on the heap.
 // Sometimes called the Mallocator.
-
+#include <cassert>
 #include "internal/block.h"
 #include "internal/types.h"
 
@@ -11,9 +11,10 @@ namespace lego {
 	class HeapAllocator
 	{
 	public:
-		Blk allocate(size_t n, uint8_t alignment)
+		Blk allocate(size_t size, uint8_t alignment)
 		{
-			return { ::operator new(n),	n };
+			assert(size && alignment);
+			return { ::operator new(size),	size };
 		}
 
 		void deallocate(Blk blk)  
