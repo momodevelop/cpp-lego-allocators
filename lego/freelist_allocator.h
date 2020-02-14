@@ -12,7 +12,56 @@
 #include "heap_allocator.h"
 
 namespace lego {
-	template<size_t Capacity, class Allocator>
+
+	namespace detail {
+		
+		class FirstFitStrategy {
+		public:
+			// Returns the previous node (as first) and the node that fits (as second) 
+			template<class Iterator>
+			std::pair<Iterator, Iterator> find(Iterator begin, Iterator end, size_t size) {
+				Iterator prev(nullptr);
+				while (begin != end) {
+					if (size <= (*begin)->size) {
+						break;
+					}
+					prev = begin;
+					++begin;
+				}
+
+				return { prev, begin };
+
+			}
+		};
+
+		class BestFitStrategy {
+		public:
+			// Returns the previous node (as first) and the node that fits (as second) 
+			template<class Iterator>
+			std::pair<Iterator, Iterator> find(Iterator begin, Iterator end, size_t size) {
+				Iterator prev(nullptr);
+				Iterator prevResult(nullptr);
+				Iterator result(nullptr);
+				size_t bestSize = -1;
+				
+				while (begin != end) {
+					if (size <= (*begin)->size && (*begin)->size <= bestSize) {
+						prevResult = prev;
+						result = begin;
+						bestSize = (*begin)->size;
+					}
+					prev = begin;
+					++begin;
+				}
+
+				return { prevResult, result };
+
+			}
+		};
+	}
+
+
+	template<size_t Capacity, class Allocator, class FitStrategy>
 	class FreeListAllocator {
 		static_assert(Capacity != 0);
 	protected:
@@ -20,7 +69,7 @@ namespace lego {
 			struct {
 				size_t size;
 				FreeBlock* next;
-			} block;
+			};
 		protected:
 			max_align_t Align;
 		};
@@ -35,6 +84,35 @@ namespace lego {
 		char* start = nullptr;
 		FreeBlock* freeList = nullptr;
 		Allocator allocator;
+		FitStrategy fitStrategy;
+
+		class iterator {
+			FreeBlock* current;
+		public:
+			iterator(FreeBlock* block) : current(block) {}
+			iterator& operator++() {
+				current = current->next;
+				return (*this);
+			}
+
+			iterator& operator++(int) {
+				iterator tmp(current);
+				current = current->next;
+				return tmp;
+			}
+
+			FreeBlock* operator*() {
+				return current;
+			}
+
+			bool operator==(const iterator& rhs) {
+				return this->current == rhs.current;
+			}
+			bool operator!=(const iterator& rhs) {
+				return this->current != rhs.current;
+			}
+
+		};
 
 		constexpr size_t MinBlockSize() {
 			return sizeof(Header) > sizeof(FreeBlock) ? sizeof(Header) : sizeof(FreeBlock);
@@ -50,7 +128,7 @@ namespace lego {
 			deallocateAll();
 
 			// The whole allocator must be able to contain at least a minimum block size
-			assert(freeList->block.size > MinBlockSize());
+			assert(freeList->size > MinBlockSize());
 		}
 
 
@@ -68,30 +146,19 @@ namespace lego {
 			size_t roundObjectSize = pointer::roundToAlignment(size, alignof(max_align_t));
 			size_t totalSize = sizeof(Header) + roundObjectSize;
 
-			// First Fit Strategy
-			// TODO: expose as policy?
-			// Search for a free block that fits the size.
-			FreeBlock* itr = freeList;
-			FreeBlock* prev = nullptr;
-			while (itr != nullptr) {
 
-				// We don't have to calculate any adjustment because our start is aligned to max_size_t and every
-				// object is aligned to rounded to max_size_t
+			// result->first is previous node.
+			// result->second is the node that fits.
+			auto [prev, itr] = fitStrategy.find(iterator(freeList), iterator(nullptr), totalSize);
+			
 
-				// if the allocation fits, break.
-				if (totalSize <= itr->block.size) {
-					break;
-				}
-
-				// otherwise, go to the next FreeBlock
-				prev = itr;
-				itr = itr->block.next;
-			}
-
-			// Could not find a block that fits
-			if (itr == nullptr)
+			if ((*itr) == nullptr)
 				return {};
 
+
+
+			// Could not find a block that fits
+			
 			// Here, we have found a block that fits and update our freeList.
 			// Check if the block can be split after allocation.
 			// It can be split if after allocation, it can store more than sizeof(Header)
@@ -100,30 +167,30 @@ namespace lego {
 			// is already within totalSize.
 
 			FreeBlock* nextBlock;
-			size_t remainingSize = itr->block.size - totalSize;
+			size_t remainingSize = (*itr)->size - totalSize;
 			if (remainingSize <= MinBlockSize()) {
 				// if it's smaller or equal to the rounded Header size, 
 				// future allocations in this block is impossible.
 
 				// The next block would then be itr->next
-				nextBlock = itr->block.next;
+				nextBlock = (*itr)->next;
 
 				// let the total size be the whole block
-				totalSize = itr->block.size;
+				totalSize = (*itr)->size;
 			}
 
 			else {
 				// Otherwise, create a new FreeBlock after the current block
-				nextBlock = reinterpret_cast<FreeBlock*>(pointer::add(itr, totalSize));
-				nextBlock->block.size = remainingSize;
-				nextBlock->block.next = itr->block.next;
+				nextBlock = reinterpret_cast<FreeBlock*>(pointer::add((*itr), totalSize));
+				nextBlock->size = remainingSize;
+				nextBlock->next = (*itr)->next;
 
 			}
 
 			// Here, we update our linked list!
 			// If there's a previous block, set it's next to itr->next
-			if (prev) {
-				prev->block.next = nextBlock;
+			if (*prev) {
+				(*prev)->next = nextBlock;
 			}
 			// If there is no previous block, it means that itr is the head.
 			// Set the head to the next block
@@ -132,11 +199,11 @@ namespace lego {
 			}
 
 			// Get and Update the header
-			Header* header = reinterpret_cast<Header*>(itr);
+			Header* header = reinterpret_cast<Header*>(*itr);
 			header->size = totalSize;
 
 			// Get the object to return to the user
-			void* ret = pointer::add(itr, sizeof(Header));
+			void* ret = pointer::add(*itr, sizeof(Header));
 			return { ret, size };
 		}
 
@@ -147,8 +214,8 @@ namespace lego {
 		// Reset all variables to start
 		void deallocateAll() noexcept {
 			this->freeList = reinterpret_cast<FreeBlock*>(start);
-			this->freeList->block.size = Capacity;
-			this->freeList->block.next = nullptr;
+			this->freeList->size = Capacity;
+			this->freeList->next = nullptr;
 		}
 
 		void deallocate(Blk blk)
@@ -169,35 +236,35 @@ namespace lego {
 				if (reinterpret_cast<uintptr_t>(itr) >= blockEnd)
 					break;
 				prev = itr;
-				itr = itr->block.next;
+				itr = itr->next;
 			}
 
 			// if there is no prev block, that means itr is at the start of the block
-			// set the head of freeList to be this block.
+			// set the head of freeList to be this 
 			if (prev == nullptr) {
 				// use prev for the next step of combining with the next block
 				prev = reinterpret_cast<FreeBlock*>(header);
-				prev->block.size = header->size;
-				prev->block.next = freeList;
+				prev->size = header->size;
+				prev->next = freeList;
 				freeList = prev;
 			}
 
-			else if (reinterpret_cast<uintptr_t>(prev) + prev->block.size == reinterpret_cast<uintptr_t>(header)) {
+			else if (reinterpret_cast<uintptr_t>(prev) + prev->size == reinterpret_cast<uintptr_t>(header)) {
 				// If the previous block is directly next to this block, combine by just adding this block's size 
 				// to the prev block's size
-				prev->block.size += header->size;
+				prev->size += header->size;
 			}
 
 			else {
 				// Here, there is a prev block, but it is not next to the current block, so we can't combine
-				// So we turn the current block into a FreeBlock.
+				// So we turn the current block into a Free
 				FreeBlock* temp = reinterpret_cast<FreeBlock*>(header);
 				// a bit of a tightrope here, but it should be fine because we have not touched the memory around header->size
-				temp->block.size = header->size;
-				temp->block.next = prev->block.next; // now, header->size is gone.
+				temp->size = header->size;
+				temp->next = prev->next; // now, header->size is gone.
 
 				// update prev block
-				prev->block.next = temp;
+				prev->next = temp;
 
 				// set this for the next step of combining with the next block
 				prev = temp;
@@ -206,18 +273,24 @@ namespace lego {
 			// Check if we can combine prev with the NEXT block
 			if (itr != nullptr && reinterpret_cast<uintptr_t>(itr) == blockEnd)
 			{
-				prev->block.size += itr->block.size;
-				prev->block.next = itr->block.next;
+				prev->size += itr->size;
+				prev->next = itr->next;
 			}
 		}
 	};
 
 
 	template<size_t Capacity>
-	using LocalFreeListAllocator = FreeListAllocator<Capacity, LocalAllocator<Capacity>>;
+	using LocalFirstFitFreeListAllocator = FreeListAllocator<Capacity, LocalAllocator<Capacity>, detail::FirstFitStrategy>;
 
 	template<size_t Capacity>
-	using HeapFreeListAllocator = FreeListAllocator<Capacity, HeapAllocator>;
+	using HeapFirstFitFreeListAllocator = FreeListAllocator<Capacity, HeapAllocator, detail::FirstFitStrategy>;
+
+	template<size_t Capacity>
+	using LocalBestFitFreeListAllocator = FreeListAllocator<Capacity, LocalAllocator<Capacity>, detail::BestFitStrategy>;
+
+	template<size_t Capacity>
+	using HeapBestFitFreeListAllocator = FreeListAllocator<Capacity, HeapAllocator, detail::BestFitStrategy>;
 }
 
 #endif 

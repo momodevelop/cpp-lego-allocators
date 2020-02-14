@@ -180,10 +180,11 @@ void TestSegregatorAllocator() {
 
 }
 
+
 void TestFreeListAllocator() {
 	cout << "=== Testing FreeListAllocator" << endl;
-	using Allocator = LocalFreeListAllocator<1000>;
 
+	using Allocator = LocalFirstFitFreeListAllocator<1000>;
 	// We'll do a simple test. Allocate and deallocate semi-randomly.
 	// Once everything is deallocated, next allocation should be same as first allocation.
 	Allocator allocator;
@@ -194,6 +195,13 @@ void TestFreeListAllocator() {
 	Blk blks[20];
 	for (int i = 0; i < 20; ++i) {
 		blks[i] = allocator.allocate(i + 1, (uint8_t)(pow(2.0, (double)(i % 4))));
+		if (!blks[i]) {
+			cout << "Failed to allocate..." << endl;
+			return;
+		}
+
+		(*(char*)((blks[i]).ptr)) = 'A';
+
 		if (i % 4 == 0) {
 			allocator.deallocate(blks[i / 2]);
 			blks[i / 2] = {};
@@ -205,8 +213,51 @@ void TestFreeListAllocator() {
 	}
 	blk = allocator.allocate(4, 4);
 	cout << "Testing allocate integrity..." << ((char*)blk.ptr == firstAllocationPtr ? "YES" : "NO") << endl;
-
+	cout << endl;
 }
+
+
+void TestFreeListFirstFitAllocator() {
+	cout << "=== Testing FreeListFirstFitAllocator" << endl;
+
+	using Allocator = LocalFirstFitFreeListAllocator<1000>;
+	// We'll do a simple test. Allocate and deallocate semi-randomly.
+	// Once everything is deallocated, next allocation should be same as first allocation.
+	Allocator allocator;
+	auto blk1 = allocator.allocate(4, 4);
+	auto blk2 = allocator.allocate(4, 4);
+	auto blk3 = allocator.allocate(4, 4);
+	auto blk4 = allocator.allocate(4, 4);
+
+	allocator.deallocate(blk2);
+	auto blk5 = allocator.allocate(4, 4);
+	cout << "Testing best fit integrity..." << ((blk5.ptr < blk4.ptr && blk5.ptr > blk1.ptr) ? "YES" : "NO") << endl;
+	cout << endl;
+}
+
+void TestFreeListBestFitAllocator() {
+	cout << "=== Testing FreeListBestFitAllocator" << endl;
+
+	using Allocator = LocalBestFitFreeListAllocator<1000>;
+	// We'll do a simple test. Allocate and deallocate semi-randomly.
+	// Once everything is deallocated, next allocation should be same as first allocation.
+	Allocator allocator;
+	auto blk1 = allocator.allocate(4, 4);
+	auto blk2 = allocator.allocate(10, 4);
+	auto blk3 = allocator.allocate(4, 4);
+	auto blk4 = allocator.allocate(4, 4);
+	auto blk5 = allocator.allocate(4, 4);
+
+	allocator.deallocate(blk2);
+	allocator.deallocate(blk4);
+	auto blk6 = allocator.allocate(4, 4);
+	cout << "Testing best fit integrity..." << ((blk6.ptr > blk3.ptr&& blk6.ptr < blk5.ptr) ? "YES" : "NO") << endl;
+	cout << blk3.ptr << endl;
+	cout << blk6.ptr << endl;
+	cout << blk5.ptr << endl;
+}
+
+
 
 int main() {
 	TestSTLOnVector();
@@ -216,4 +267,6 @@ int main() {
 	TestLinearAllocator();
 	TestSegregatorAllocator();
 	TestFreeListAllocator();
+	TestFreeListFirstFitAllocator();
+	TestFreeListBestFitAllocator();
 }
