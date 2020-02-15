@@ -114,9 +114,8 @@ namespace lego {
 
 		};
 
-		constexpr size_t MinBlockSize() {
-			return sizeof(Header) > sizeof(FreeBlock) ? sizeof(Header) : sizeof(FreeBlock);
-		}
+		constexpr static size_t minBlockSize = sizeof(Header) > sizeof(FreeBlock) ? sizeof(Header) : sizeof(FreeBlock);
+		
 
 	public:
 		FreeListAllocator()
@@ -128,7 +127,7 @@ namespace lego {
 			deallocateAll();
 
 			// The whole allocator must be able to contain at least a minimum block size
-			assert(freeList->size > MinBlockSize());
+			assert(freeList->size > minBlockSize);
 		}
 
 
@@ -168,7 +167,7 @@ namespace lego {
 
 			FreeBlock* nextBlock;
 			size_t remainingSize = (*itr)->size - totalSize;
-			if (remainingSize <= MinBlockSize()) {
+			if (remainingSize <= minBlockSize) {
 				// if it's smaller or equal to the rounded Header size, 
 				// future allocations in this block is impossible.
 
