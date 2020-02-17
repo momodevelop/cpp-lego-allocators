@@ -33,6 +33,7 @@
     <ClInclude Include="..\lego\log_allocator.h" />
     <ClInclude Include="..\lego\null_allocator.h" />
     <ClInclude Include="..\lego\segregator_allocator.h" />
+    <ClInclude Include="..\lego\slab_allocator.h" />
     <ClInclude Include="..\lego\stack_allocator.h" />
     <ClInclude Include="..\lego\stl_adapter.h" />
   </ItemGroup>

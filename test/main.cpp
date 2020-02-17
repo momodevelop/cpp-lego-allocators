@@ -10,6 +10,7 @@
 #include "../lego/linear_allocator.h"
 #include "../lego/segregator_allocator.h"
 #include "../lego/freelist_allocator.h"
+#include "../lego/slab_allocator.h"
 
 using namespace std;
 using namespace lego;
@@ -193,7 +194,7 @@ void TestFreeListAllocator() {
 	allocator.deallocate(blk);
 
 	Blk blks[20];
-	for (int i = 0; i < 20; ++i) {
+	for (size_t i = 0; i < 20; ++i) {
 		blks[i] = allocator.allocate(i + 1, (uint8_t)(pow(2.0, (double)(i % 4))));
 		if (!blks[i]) {
 			cout << "Failed to allocate..." << endl;
@@ -257,7 +258,13 @@ void TestFreeListBestFitAllocator() {
 	cout << blk5.ptr << endl;
 }
 
+void TestSlabAllocator() {
+	cout << "=== Testing SlabAllocator" << endl;
+	using Allocator = SlabAllocator<1000, 25, 4, LocalAllocator<1000>>;
+	Allocator allocator;
 
+
+}
 
 int main() {
 	TestSTLOnVector();
@@ -269,4 +276,5 @@ int main() {
 	TestFreeListAllocator();
 	TestFreeListFirstFitAllocator();
 	TestFreeListBestFitAllocator();
+	TestSlabAllocator();
 }

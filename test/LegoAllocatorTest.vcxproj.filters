@@ -58,5 +58,8 @@
     <ClInclude Include="..\lego\internal\pointer.h">
       <Filter>lego\internal</Filter>
     </ClInclude>
+    <ClInclude Include="..\lego\slab_allocator.h">
+      <Filter>lego</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
