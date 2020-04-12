@@ -5,8 +5,8 @@
 // Sometimes called the Mallocator.
 
 #include <cassert>
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 #include "internal/pointer.h"
 #include "local_allocator.h"
 #include "heap_allocator.h"
@@ -37,7 +37,7 @@ namespace lego {
 		{
 			assert(size && alignment);
 
-			uint8_t adjustment = pointer::getAlignForwardDiff(current, alignment);
+			uint8_t adjustment = internal::pointer::getAlignForwardDiff(current, alignment);
 
 			// if not enough space, return nullptr
 			if (current + adjustment + size > start + Capacity) {

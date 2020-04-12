@@ -2,8 +2,8 @@
 #define __LEGO_LOG_ALLOCATOR_H__
 
 // Allocator that logs to cout whenever there's allocator and deallocation (for debugging purposes)
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 #include <iostream>
 
 namespace lego {

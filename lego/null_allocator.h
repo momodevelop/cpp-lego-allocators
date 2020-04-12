@@ -1,8 +1,8 @@
 #ifndef __LEGO_STACKFRAME_ALLOCATOR_H__
 #define __LEGO_STACKFRAME_ALLOCATOR_H__
 
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 
 namespace lego {
 	class NullAllocator

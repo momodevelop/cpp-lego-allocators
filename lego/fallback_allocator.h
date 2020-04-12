@@ -3,8 +3,8 @@
 
 // If the Primary allocator fails, the Fallback allocator will allocate.
 #include <cassert>
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 
 namespace lego {
 	template <class Primary, class Fallback>

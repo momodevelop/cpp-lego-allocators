@@ -1,5 +1,5 @@
-#ifndef __LEGO_ALLOCATORS_BLOCK_H__
-#define __LEGO_ALLOCATORS_BLOCK_H__
+#ifndef __LEGO_ALLOCATORS_BLK_H__
+#define __LEGO_ALLOCATORS_BLK_H__
 
 namespace lego {
 	struct Blk {

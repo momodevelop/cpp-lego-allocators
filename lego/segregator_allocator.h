@@ -2,8 +2,8 @@
 #define __LEGO_SEGREGATOR_ALLOCATOR_H_
 
 #include <cassert>
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 
 namespace lego {
 	template <size_t Threshhold, class SmallAllocator, class BigAllocator>

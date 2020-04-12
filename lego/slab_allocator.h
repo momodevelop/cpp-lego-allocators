@@ -5,8 +5,8 @@
 // Sometimes called the Mallocator.
 
 #include <cassert>
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 #include "internal/pointer.h"
 #include "local_allocator.h"
 #include "heap_allocator.h"
@@ -77,7 +77,7 @@ namespace lego {
 		}
 
 		void deallocateAll() {
-			uint8_t adjustment = pointer::getAlignForwardDiff(start, ObjectAlignment);
+			uint8_t adjustment = internal::pointer::getAlignForwardDiff(start, ObjectAlignment);
 
 			// save it as (void**)
 			freeList = reinterpret_cast<void**>(start + adjustment);
@@ -89,7 +89,7 @@ namespace lego {
 			void** itr = freeList;
 			for (size_t i = 0; i < objectNum - 1; ++i) {
 				// calculate and store the address of the next item
-				*itr = pointer::add(itr, ObjectSize);
+				*itr = internal::pointer::add(itr, ObjectSize);
 				itr = reinterpret_cast<void**>(*itr);
 			}
 

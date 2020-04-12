@@ -4,8 +4,8 @@
 // Simple allocator that reserves memory on the heap.
 // Sometimes called the Mallocator.
 #include <cassert>
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 
 namespace lego {
 	class HeapAllocator

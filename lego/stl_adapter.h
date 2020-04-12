@@ -1,7 +1,7 @@
 #ifndef __LEGO_STL_ADAPTER_H__
 #define __LEGO_STL_ADAPTER_H__
 
-#include "internal/types.h"
+
 // https://howardhinnant.github.io/allocator_boilerplate.html
 // For use in STL containers. Kind of an adaptor for the rest of the allocators.
 

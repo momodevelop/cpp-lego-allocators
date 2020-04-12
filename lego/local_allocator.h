@@ -8,8 +8,8 @@
 // This is useful if you do not want to reserve memory in the heap using the HeapAllocator
 
 
-#include "internal/block.h"
-#include "internal/types.h"
+#include "blk.h"
+
 
 namespace lego {
 	template<size_t Capacity>
