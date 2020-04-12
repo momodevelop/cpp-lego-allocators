@@ -23,10 +23,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lego\blk.h" />
+    <ClInclude Include="..\lego\detail\pointer.h" />
     <ClInclude Include="..\lego\fallback_allocator.h" />
     <ClInclude Include="..\lego\freelist_allocator.h" />
     <ClInclude Include="..\lego\heap_allocator.h" />
-    <ClInclude Include="..\lego\internal\pointer.h" />
     <ClInclude Include="..\lego\linear_allocator.h" />
     <ClInclude Include="..\lego\local_allocator.h" />
     <ClInclude Include="..\lego\log_allocator.h" />

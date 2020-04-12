@@ -9,7 +9,7 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="lego\internal">
+    <Filter Include="lego\detail">
       <UniqueIdentifier>{de03f0f4-36d4-476e-a3d4-6789ddffe86b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -49,14 +49,14 @@
     <ClInclude Include="..\lego\segregator_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
-    <ClInclude Include="..\lego\internal\pointer.h">
-      <Filter>lego\internal</Filter>
-    </ClInclude>
     <ClInclude Include="..\lego\slab_allocator.h">
       <Filter>lego</Filter>
     </ClInclude>
     <ClInclude Include="..\lego\blk.h">
       <Filter>lego</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lego\detail\pointer.h">
+      <Filter>lego\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

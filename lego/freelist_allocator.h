@@ -5,9 +5,10 @@
 // Sometimes called the Mallocator.
 
 #include <cassert>
+#include <utility>
 #include "blk.h"
 
-#include "internal/pointer.h"
+#include "detail/pointer.h"
 #include "local_allocator.h"
 #include "heap_allocator.h"
 
@@ -142,7 +143,7 @@ namespace lego {
 
 			// Calculate the size of the header + object rounded to alignment.
 			// All our objects and headers will be aligned to the maximum alignment size. 
-			size_t roundObjectSize = internal::pointer::roundToAlignment(size, alignof(max_align_t));
+			size_t roundObjectSize = detail::pointer::roundToAlignment(size, alignof(max_align_t));
 			size_t totalSize = sizeof(Header) + roundObjectSize;
 
 
@@ -180,7 +181,7 @@ namespace lego {
 
 			else {
 				// Otherwise, create a new FreeBlock after the current block
-				nextBlock = reinterpret_cast<FreeBlock*>(internal::pointer::add((*itr), totalSize));
+				nextBlock = reinterpret_cast<FreeBlock*>(detail::pointer::add((*itr), totalSize));
 				nextBlock->size = remainingSize;
 				nextBlock->next = (*itr)->next;
 
@@ -202,7 +203,7 @@ namespace lego {
 			header->size = totalSize;
 
 			// Get the object to return to the user
-			void* ret = internal::pointer::add(*itr, sizeof(Header));
+			void* ret = detail::pointer::add(*itr, sizeof(Header));
 			return { ret, size };
 		}
 
@@ -224,8 +225,8 @@ namespace lego {
 
 			assert(owns(blk));
 
-			Header* header = reinterpret_cast<Header*>(internal::pointer::sub(blk.ptr, sizeof(Header)));
-			uintptr_t blockEnd = reinterpret_cast<uintptr_t>(internal::pointer::add(header, header->size));
+			Header* header = reinterpret_cast<Header*>(detail::pointer::sub(blk.ptr, sizeof(Header)));
+			uintptr_t blockEnd = reinterpret_cast<uintptr_t>(detail::pointer::add(header, header->size));
 
 			// Look for a FreeBlock which we can combine
 			FreeBlock* itr = freeList;
