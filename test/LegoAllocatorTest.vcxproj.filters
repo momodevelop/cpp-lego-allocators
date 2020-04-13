@@ -58,5 +58,8 @@
     <ClInclude Include="..\lego\detail\pointer.h">
       <Filter>lego\detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\lego\detail\predef_freelist_strategies.h">
+      <Filter>lego\detail</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

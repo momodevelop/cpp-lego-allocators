@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lego\blk.h" />
+    <ClInclude Include="..\lego\detail\predef_freelist_strategies.h" />
     <ClInclude Include="..\lego\detail\pointer.h" />
     <ClInclude Include="..\lego\fallback_allocator.h" />
     <ClInclude Include="..\lego\freelist_allocator.h" />

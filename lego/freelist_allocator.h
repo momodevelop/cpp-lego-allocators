@@ -9,58 +9,11 @@
 #include "blk.h"
 
 #include "detail/pointer.h"
+#include "detail/predef_freelist_strategies.h"
 #include "local_allocator.h"
 #include "heap_allocator.h"
 
 namespace lego {
-
-	namespace detail {
-		
-		class FirstFitStrategy {
-		public:
-			// Returns the previous node (as first) and the node that fits (as second) 
-			template<class Iterator>
-			std::pair<Iterator, Iterator> find(Iterator begin, Iterator end, size_t size) {
-				Iterator prev(nullptr);
-				while (begin != end) {
-					if (size <= (*begin)->size) {
-						break;
-					}
-					prev = begin;
-					++begin;
-				}
-
-				return { prev, begin };
-
-			}
-		};
-
-		class BestFitStrategy {
-		public:
-			// Returns the previous node (as first) and the node that fits (as second) 
-			template<class Iterator>
-			std::pair<Iterator, Iterator> find(Iterator begin, Iterator end, size_t size) {
-				Iterator prev(nullptr);
-				Iterator prevResult(nullptr);
-				Iterator result(nullptr);
-				size_t bestSize = -1;
-				
-				while (begin != end) {
-					if (size <= (*begin)->size && (*begin)->size <= bestSize) {
-						prevResult = prev;
-						result = begin;
-						bestSize = (*begin)->size;
-					}
-					prev = begin;
-					++begin;
-				}
-
-				return { prevResult, result };
-
-			}
-		};
-	}
-
 
 	template<size_t Capacity, class Allocator, class FitStrategy>
 	class FreeListAllocator {
