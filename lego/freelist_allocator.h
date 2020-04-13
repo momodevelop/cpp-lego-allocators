@@ -14,7 +14,7 @@
 
 namespace lego {
 
-	namespace detail {
+	namespace fit_strategies {
 		
 		class FirstFitStrategy {
 		public:
